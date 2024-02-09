@@ -1,0 +1,4 @@
+# voici les dossiers/fichier qui ne seront pas pushed sur github
+/node_modules
+.env
+db-config.json
