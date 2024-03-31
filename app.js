@@ -190,12 +190,17 @@ server.delete(
     //  selection / conv unicode(protction xss) / espaces / pour eviter de creer champs vide des autres values / impossible de creer champ vide
     check("id").escape().trim().notEmpty(),
   ],
+
   async (req, res) => {
     const id = req.params.id;
-    const resultat = await db.collection("films").doc(id).delete();
-
-    res.statusCode = 200;
-    res.json({ message: "film deleted" });
+    try {
+      const deleteResult = await db.collection("films").doc(id).delete();
+      // Optionally check deleteResult for specifics if needed
+      res.status(200).json({ message: "Film deleted" });
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      res.status(500).json({ message: "Error deleting film" });
+    }
   }
 );
 
@@ -299,6 +304,8 @@ server.post("/utilisateurs/connexion", async (req, res) => {
     courriel: utilisateurs.courriel,
     id: utilisateurs.id,
   };
+
+  
   const options = {
     expiresIn: "1d",
   };
@@ -308,6 +315,7 @@ server.post("/utilisateurs/connexion", async (req, res) => {
     process.env.JWT_SECRET, ///dans le fichier .env !!
     options
   );
+  
 
   // On retourne les infos de l'utilisateur sans le mot de passe
   delete utilisateurAValider.mdp;
